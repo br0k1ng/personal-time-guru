@@ -4,11 +4,11 @@ import { cn } from "@/lib/utils";
 import { Link, useLocation } from "react-router-dom";
 
 const navigation = [
-  { name: "Diary", href: "/diary", icon: BookOpen },
-  { name: "Tasks", href: "/tasks", icon: ListTodo },
-  { name: "Schedule", href: "/schedule", icon: CalendarDays },
-  { name: "Habits", href: "/habits", icon: ActivitySquare },
-  { name: "Analytics", href: "/analytics", icon: BarChart },
+  { name: "Дневник", href: "/diary", icon: BookOpen },
+  { name: "Задачи", href: "/tasks", icon: ListTodo },
+  { name: "Расписание", href: "/schedule", icon: CalendarDays },
+  { name: "Привычки", href: "/habits", icon: ActivitySquare },
+  { name: "Аналитика", href: "/analytics", icon: BarChart },
 ];
 
 export function Sidebar() {
@@ -17,7 +17,7 @@ export function Sidebar() {
   return (
     <div className="flex flex-col w-64 bg-card border-r">
       <div className="p-6">
-        <h1 className="text-2xl font-semibold text-primary">Assistant</h1>
+        <h1 className="text-2xl font-semibold text-primary">Ассистент</h1>
       </div>
       <nav className="flex-1 space-y-1 px-3">
         {navigation.map((item) => {

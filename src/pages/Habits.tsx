@@ -6,10 +6,10 @@ export default function Habits() {
     <div className="space-y-4 fade-in">
       <Card>
         <CardHeader>
-          <CardTitle className="text-2xl font-semibold">Habit Tracker</CardTitle>
+          <CardTitle className="text-2xl font-semibold">Трекер привычек</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-muted-foreground">Track your daily habits...</p>
+          <p className="text-muted-foreground">Отслеживайте свои ежедневные привычки...</p>
         </CardContent>
       </Card>
     </div>

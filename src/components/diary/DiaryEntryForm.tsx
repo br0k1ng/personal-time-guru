@@ -30,19 +30,19 @@ export function DiaryEntryForm({ onSubmit }: DiaryEntryFormProps) {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <Input
-        placeholder="Entry title..."
+        placeholder="Заголовок записи..."
         value={title}
         onChange={(e) => setTitle(e.target.value)}
         className="text-lg font-medium"
       />
       <Textarea
-        placeholder="Write your thoughts..."
+        placeholder="Напишите свои мысли..."
         value={content}
         onChange={(e) => setContent(e.target.value)}
         className="min-h-[200px] resize-none"
       />
       <Button type="submit" className="w-full">
-        Save Entry
+        Сохранить запись
       </Button>
     </form>
   );

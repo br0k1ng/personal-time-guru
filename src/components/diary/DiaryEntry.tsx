@@ -1,5 +1,6 @@
 
 import { format } from "date-fns";
+import { ru } from "date-fns/locale";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import type { DiaryEntry as DiaryEntryType } from "@/types/diary";
 
@@ -14,7 +15,7 @@ export function DiaryEntry({ entry }: DiaryEntryProps) {
         <div className="flex justify-between items-start">
           <CardTitle className="text-xl">{entry.title}</CardTitle>
           <span className="text-sm text-muted-foreground">
-            {format(new Date(entry.createdAt), "PPP p")}
+            {format(new Date(entry.createdAt), "PPP p", { locale: ru })}
           </span>
         </div>
       </CardHeader>

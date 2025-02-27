@@ -6,10 +6,10 @@ export default function Schedule() {
     <div className="space-y-4 fade-in">
       <Card>
         <CardHeader>
-          <CardTitle className="text-2xl font-semibold">My Schedule</CardTitle>
+          <CardTitle className="text-2xl font-semibold">Моё расписание</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-muted-foreground">Plan your day here...</p>
+          <p className="text-muted-foreground">Планируйте свой день здесь...</p>
         </CardContent>
       </Card>
     </div>

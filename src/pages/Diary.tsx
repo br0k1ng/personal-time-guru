@@ -23,7 +23,7 @@ export default function Diary() {
     <div className="space-y-6 fade-in">
       <Card>
         <CardHeader>
-          <CardTitle className="text-2xl font-semibold">My Diary</CardTitle>
+          <CardTitle className="text-2xl font-semibold">Мой дневник</CardTitle>
         </CardHeader>
         <CardContent>
           <DiaryEntryForm onSubmit={handleCreateEntry} />
@@ -38,7 +38,7 @@ export default function Diary() {
           <Card>
             <CardContent className="py-8">
               <p className="text-center text-muted-foreground">
-                No entries yet. Start writing your thoughts above...
+                Записей пока нет. Начните писать свои мысли выше...
               </p>
             </CardContent>
           </Card>
