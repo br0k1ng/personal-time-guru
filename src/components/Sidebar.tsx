@@ -1,0 +1,44 @@
+
+import { CalendarDays, BookOpen, ListTodo, ActivitySquare, Bell, BarChart } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { Link, useLocation } from "react-router-dom";
+
+const navigation = [
+  { name: "Diary", href: "/diary", icon: BookOpen },
+  { name: "Tasks", href: "/tasks", icon: ListTodo },
+  { name: "Schedule", href: "/schedule", icon: CalendarDays },
+  { name: "Habits", href: "/habits", icon: ActivitySquare },
+  { name: "Analytics", href: "/analytics", icon: BarChart },
+];
+
+export function Sidebar() {
+  const location = useLocation();
+
+  return (
+    <div className="flex flex-col w-64 bg-card border-r">
+      <div className="p-6">
+        <h1 className="text-2xl font-semibold text-primary">Assistant</h1>
+      </div>
+      <nav className="flex-1 space-y-1 px-3">
+        {navigation.map((item) => {
+          const isActive = location.pathname.startsWith(item.href);
+          return (
+            <Link
+              key={item.name}
+              to={item.href}
+              className={cn(
+                "flex items-center px-3 py-2 rounded-md text-sm font-medium transition-colors",
+                isActive
+                  ? "bg-primary/10 text-primary"
+                  : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+              )}
+            >
+              <item.icon className="h-5 w-5 mr-3" />
+              {item.name}
+            </Link>
+          );
+        })}
+      </nav>
+    </div>
+  );
+}
