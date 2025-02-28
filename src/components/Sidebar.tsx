@@ -1,5 +1,5 @@
 
-import { CalendarDays, BookOpen, ListTodo, ActivitySquare, Bell, BarChart } from "lucide-react";
+import { CalendarDays, BookOpen, ListTodo, ActivitySquare, Settings, BarChart } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Link, useLocation } from "react-router-dom";
 
@@ -9,6 +9,7 @@ const navigation = [
   { name: "Расписание", href: "/schedule", icon: CalendarDays },
   { name: "Привычки", href: "/habits", icon: ActivitySquare },
   { name: "Аналитика", href: "/analytics", icon: BarChart },
+  { name: "Настройки", href: "/settings", icon: Settings },
 ];
 
 export function Sidebar() {
