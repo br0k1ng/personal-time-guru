@@ -1,69 +1,98 @@
-# Welcome to your Lovable project
 
-## Project info
+# Personal Time Guru
 
-**URL**: https://lovable.dev/projects/7ba556a0-111c-4d1f-ae32-2636cf417870
+## О проекте
 
-## How can I edit this code?
+Personal Time Guru — это приложение для управления задачами, привычками, расписанием и личным дневником. Интегрированное с Telegram, оно позволяет получать уведомления и управлять своими задачами прямо из мессенджера.
 
-There are several ways of editing your application.
+## Возможности
 
-**Use Lovable**
+- **Управление задачами**: создание, редактирование и отслеживание выполнения задач
+- **Формирование привычек**: отслеживание регулярных привычек и построение цепочек
+- **Ведение дневника**: сохранение мыслей и идей
+- **Планирование расписания**: события с напоминаниями
+- **Аналитика**: визуализация прогресса и статистики
+- **Интеграция с Telegram**: работа как мини-приложение в Telegram
+- **Уведомления**: напоминания о задачах и событиях
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/7ba556a0-111c-4d1f-ae32-2636cf417870) and start prompting.
+## Модель подписки
 
-Changes made via Lovable will be committed automatically to this repo.
+- **Бесплатный план**: базовое управление задачами
+- **Базовый план**: задачи, привычки, дневник, расписание и уведомления
+- **Pro план**: все возможности, включая аналитику и расширенную статистику
 
-**Use your preferred IDE**
+## Партнерская программа
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+Приведите 3 новых пользователя и получите месяц бесплатной подписки Pro!
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+## Технологии
 
-Follow these steps:
+- React + TypeScript
+- Vite
+- Tailwind CSS
+- shadcn/ui
+- React Router
+- Recharts для визуализации данных
+- node-telegram-bot-api для интеграции с Telegram
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+## Локализация
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+Приложение доступно на следующих языках:
+- Русский
+- Английский
+- Китайский
 
-# Step 3: Install the necessary dependencies.
-npm i
+## Архивация задач
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+- Выполненные задачи хранятся в списке 7 дней
+- После этого они перемещаются в архив, где хранятся 30 дней
+- Настройки архивации можно изменить в настройках
+
+## Примеры уведомлений в Telegram
+
+### Утреннее напоминание
+
+```
+🌞 Доброе утро, Александр!
+
+📅 События на сегодня (2):
+1. 09:00 - Встреча с клиентом
+2. 15:30 - Созвон с командой
+
+📝 Активные задачи (3):
+1. Подготовить презентацию
+2. Ответить на письма
+3. Завершить отчет
 ```
 
-**Edit a file directly in GitHub**
+### Вечернее напоминание
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+```
+🌙 Добрый вечер, Александр!
 
-**Use GitHub Codespaces**
+📅 События на завтра (1):
+1. 10:00 - Совещание с руководством
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+Не забудьте спланировать задачи на завтра!
+```
 
-## What technologies are used for this project?
+## Как запустить
 
-This project is built with .
+```bash
+# Установка зависимостей
+npm install
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+# Запуск в режиме разработки
+npm run dev
 
-## How can I deploy this project?
+# Сборка для продакшн
+npm run build
+```
 
-Simply open [Lovable](https://lovable.dev/projects/7ba556a0-111c-4d1f-ae32-2636cf417870) and click on Share -> Publish.
+## Настройка сервера Telegram бота
 
-## I want to use a custom domain - is that possible?
+См. подробную инструкцию в документации серверной части.
 
-We don't support custom domains (yet). If you want to deploy your project under your own domain then we recommend using Netlify. Visit our docs for more details: [Custom domains](https://docs.lovable.dev/tips-tricks/custom-domain/)
+## Лицензия
+
+Все права защищены © 2023 Personal Time Guru
