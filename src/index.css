@@ -1,6 +1,4 @@
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -13,7 +11,7 @@
     --card-foreground: 222.2 84% 4.9%;
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
-    --primary: 172 66% 50%;
+    --primary: 221.2 83.2% 53.3%;
     --primary-foreground: 210 40% 98%;
     --secondary: 210 40% 96.1%;
     --secondary-foreground: 222.2 47.4% 11.2%;
@@ -25,34 +23,132 @@
     --destructive-foreground: 210 40% 98%;
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 172 66% 50%;
-    --radius: 0.75rem;
+    --ring: 221.2 83.2% 53.3%;
+    --radius: 0.5rem;
   }
-
+ 
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 217.2 91.2% 59.8%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 224.3 76.3% 48%;
+  }
+}
+ 
+@layer base {
   * {
     @apply border-border;
   }
-
   body {
-    @apply bg-background text-foreground antialiased;
-    font-family: 'Inter', sans-serif;
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
   }
 }
 
-@layer utilities {
-  .fade-in {
-    @apply transition-opacity duration-300 ease-in-out;
-  }
+/* Анимация появления */
+.fade-in {
+  animation: fade-in 0.3s ease-in-out;
+}
 
-  .slide-in {
-    @apply transition-all duration-300 ease-in-out;
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Telegram Mini App стили */
+:root {
+  --tg-theme-bg-color: var(--background);
+  --tg-theme-text-color: var(--foreground);
+  --tg-theme-hint-color: var(--muted-foreground);
+  --tg-theme-link-color: var(--primary);
+  --tg-theme-button-color: var(--primary);
+  --tg-theme-button-text-color: var(--primary-foreground);
+  --tg-theme-secondary-bg-color: var(--card);
+}
+
+/* Применяем цвета Telegram, если мы в Telegram Mini App */
+.telegram-app {
+  background-color: var(--tg-theme-bg-color);
+  color: var(--tg-theme-text-color);
+}
+
+.telegram-app .card {
+  background-color: var(--tg-theme-secondary-bg-color);
+}
+
+.telegram-app .text-muted-foreground {
+  color: var(--tg-theme-hint-color);
+}
+
+.telegram-app .bg-primary {
+  background-color: var(--tg-theme-button-color);
+}
+
+.telegram-app .text-primary {
+  color: var(--tg-theme-link-color);
+}
+
+/* Адаптация для мобильных устройств */
+@media (max-width: 768px) {
+  .sidebar {
+    width: 100%;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    z-index: 50;
+    height: auto;
+    border-top: 1px solid var(--border);
+    border-right: none;
   }
   
-  .glass {
-    @apply bg-white/80 backdrop-blur-md border border-white/20;
+  .sidebar nav {
+    display: flex;
+    flex-direction: row;
+    padding: 0.5rem;
+    justify-content: space-between;
   }
-
-  .section-padding {
-    @apply px-6 py-8 md:px-8 lg:px-12;
+  
+  .sidebar nav a {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0.5rem 0;
+    font-size: 0.75rem;
+  }
+  
+  .sidebar nav a svg {
+    margin-right: 0;
+    margin-bottom: 0.25rem;
+  }
+  
+  .sidebar h1 {
+    display: none;
+  }
+  
+  .main-content {
+    margin-left: 0;
+    padding-bottom: 5rem;
   }
 }

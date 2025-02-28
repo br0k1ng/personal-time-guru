@@ -1,12 +1,35 @@
 
+import { useEffect, useState } from "react";
 import { Sidebar } from "./Sidebar";
+import { initTelegramWebApp, isTelegramWebApp } from "@/lib/telegram";
 
-export function MainLayout({ children }: { children: React.ReactNode }) {
+interface MainLayoutProps {
+  children: React.ReactNode;
+}
+
+export function MainLayout({ children }: MainLayoutProps) {
+  const [isTelegramApp, setIsTelegramApp] = useState(false);
+  
+  useEffect(() => {
+    // Проверяем, запущено ли приложение в Telegram
+    const telegramApp = isTelegramWebApp();
+    setIsTelegramApp(telegramApp);
+    
+    if (telegramApp) {
+      // Инициализируем Telegram WebApp
+      initTelegramWebApp();
+      // Добавляем класс для стилизации
+      document.body.classList.add('telegram-app');
+    }
+  }, []);
+  
   return (
-    <div className="flex h-screen overflow-hidden bg-background">
-      <Sidebar />
-      <main className="flex-1 overflow-y-auto">
-        <div className="container py-6 space-y-6">{children}</div>
+    <div className="flex min-h-screen bg-background">
+      <div className="sidebar">
+        <Sidebar />
+      </div>
+      <main className="flex-1 p-4 md:p-6 main-content">
+        {children}
       </main>
     </div>
   );
