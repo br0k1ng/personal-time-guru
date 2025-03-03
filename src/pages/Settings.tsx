@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Card, CardHeader, CardTitle, CardContent, CardDescription, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -12,7 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
 import { 
   Globe, Users, Key, Clock, Archive, Share2, Copy, Gift, CreditCard, CheckCircle, 
-  User, Trash2, BarChart, LineChart, PieChart, FileText, Camera, Upload, AlertTriangle
+  User, Trash2, BarChart, LineChart, PieChart, FileText, Camera, Upload, AlertTriangle, Bell
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -54,6 +53,12 @@ export default function Settings() {
   
   // Настройки графиков
   const [preferredChartType, setPreferredChartType] = useState("bar");
+  
+  // Настройки уведомлений
+  const [notificationEnabled, setNotificationEnabled] = useState(true);
+  const [quietHoursEnabled, setQuietHoursEnabled] = useState(false);
+  const [quietHoursStart, setQuietHoursStart] = useState("22:00");
+  const [quietHoursEnd, setQuietHoursEnd] = useState("07:00");
   
   // Загрузка данных пользователя
   useEffect(() => {
@@ -186,6 +191,15 @@ export default function Settings() {
     toast({
       title: "Настройки сохранены",
       description: "Настройки графиков успешно обновлены",
+    });
+  };
+  
+  // Сохранение настроек уведомлений
+  const handleSaveNotificationSettings = () => {
+    // В реальном приложении настройки отправлялись бы на сервер
+    toast({
+      title: "Настройки сохранены",
+      description: "Настройки уведомлений успешно обновлены",
     });
   };
   
@@ -750,6 +764,70 @@ export default function Settings() {
                     )}
                   </div>
                 </CardContent>
+              </Card>
+            </TabsContent>
+            
+            {/* Вкладка уведомлений */}
+            <TabsContent value="notifications" className="space-y-6">
+              <Card className="border-dashed">
+                <CardHeader>
+                  <div className="flex items-center space-x-2">
+                    <Bell className="h-5 w-5 text-muted-foreground" />
+                    <CardTitle>Настройки уведомлений</CardTitle>
+                  </div>
+                  <CardDescription>
+                    Настройте параметры уведомлений и режим тишины
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <Label htmlFor="notification-enabled" className="flex-1">Уведомления</Label>
+                      <Switch 
+                        id="notification-enabled" 
+                        checked={notificationEnabled} 
+                        onCheckedChange={setNotificationEnabled}
+                      />
+                    </div>
+                    
+                    <div className="flex items-center justify-between">
+                      <Label htmlFor="quiet-hours-enabled" className="flex-1">Режим тишины</Label>
+                      <Switch 
+                        id="quiet-hours-enabled" 
+                        checked={quietHoursEnabled} 
+                        onCheckedChange={setQuietHoursEnabled}
+                      />
+                    </div>
+                    
+                    {quietHoursEnabled && (
+                      <div className="grid grid-cols-2 gap-4 pt-4">
+                        <div>
+                          <Label htmlFor="quiet-start">Начало</Label>
+                          <Input 
+                            id="quiet-start" 
+                            type="time" 
+                            value={quietHoursStart} 
+                            onChange={(e) => setQuietHoursStart(e.target.value)}
+                          />
+                        </div>
+                        <div>
+                          <Label htmlFor="quiet-end">Конец</Label>
+                          <Input 
+                            id="quiet-end" 
+                            type="time" 
+                            value={quietHoursEnd} 
+                            onChange={(e) => setQuietHoursEnd(e.target.value)}
+                          />
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </CardContent>
+                <CardFooter className="justify-end">
+                  <Button onClick={handleSaveNotificationSettings}>
+                    Сохранить настройки
+                  </Button>
+                </CardFooter>
               </Card>
             </TabsContent>
             

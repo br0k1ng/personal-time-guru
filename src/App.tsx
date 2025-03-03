@@ -11,6 +11,7 @@ import Schedule from "./pages/Schedule";
 import Habits from "./pages/Habits";
 import Analytics from "./pages/Analytics";
 import Settings from "./pages/Settings";
+import Support from "./pages/Support";
 import TaskArchive from "./pages/TaskArchive";
 import NotFound from "./pages/NotFound";
 import { LanguageProvider } from "./contexts/LanguageContext";
@@ -36,6 +37,7 @@ const App = () => (
                   <Route path="/habits" element={<Habits />} />
                   <Route path="/analytics" element={<Analytics />} />
                   <Route path="/settings" element={<Settings />} />
+                  <Route path="/support" element={<Support />} />
                   <Route path="*" element={<NotFound />} />
                 </Routes>
               </MainLayout>

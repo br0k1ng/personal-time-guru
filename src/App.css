@@ -1,8 +1,16 @@
+
 #root {
   max-width: 1280px;
   margin: 0 auto;
-  padding: 2rem;
   text-align: center;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  #root {
+    max-width: 100%;
+    padding: 0;
+  }
 }
 
 .logo {
@@ -39,4 +47,43 @@
 
 .read-the-docs {
   color: #888;
+}
+
+/* Fade in animation */
+.fade-in {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* For mobile responsiveness */
+@media (max-width: 768px) {
+  .main-content {
+    width: 100%;
+  }
+  
+  /* Adjusted spacing for mobile */
+  .card {
+    padding: 1em;
+  }
+  
+  /* Make forms and inputs more mobile-friendly */
+  input, textarea, select, button {
+    font-size: 16px !important; /* Prevents iOS zoom on focus */
+  }
+}
+
+/* Telegram app specific styles */
+.telegram-app {
+  /* Specific styles for when the app is running in Telegram */
+  background-color: var(--tg-theme-bg-color, #ffffff);
+  color: var(--tg-theme-text-color, #000000);
+}
+
+.telegram-app button.primary {
+  background-color: var(--tg-theme-button-color, #2481cc);
+  color: var(--tg-theme-button-text-color, #ffffff);
 }

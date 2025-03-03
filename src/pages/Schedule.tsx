@@ -1,131 +1,132 @@
 
 import { useState } from "react";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useQuery } from "@tanstack/react-query";
+import { EnhancedCalendar } from "@/components/schedule/EnhancedCalendar";
+import { Button } from "@/components/ui/button";
+import { PlusCircle } from "lucide-react";
 import { EventForm } from "@/components/schedule/EventForm";
-import { EventItem } from "@/components/schedule/EventItem";
-import { NotificationSettings } from "@/components/telegram/NotificationSettings";
-import { ScheduleEvent, CreateEventData } from "@/types/schedule";
 import { useToast } from "@/hooks/use-toast";
-import { isTelegramWebApp } from "@/lib/telegram";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { format } from "date-fns";
+
+// Имитация загрузки событий
+const fetchEvents = async () => {
+  // В реальном приложении здесь был бы API-запрос
+  return [
+    {
+      id: "1",
+      title: "Встреча с командой",
+      date: new Date(2023, 5, 15, 10, 0),
+      time: "10:00",
+      description: "Обсуждение проекта",
+      category: "work"
+    },
+    {
+      id: "2",
+      title: "Посещение врача",
+      date: new Date(2023, 5, 18, 14, 30),
+      time: "14:30",
+      description: "Плановый осмотр",
+      category: "personal"
+    },
+    {
+      id: "3",
+      title: "День рождения друга",
+      date: new Date(),
+      time: "18:00",
+      description: "Не забыть купить подарок",
+      category: "personal"
+    }
+  ];
+};
 
 export default function Schedule() {
-  const [events, setEvents] = useState<ScheduleEvent[]>([]);
-  const [activeTab, setActiveTab] = useState<"today" | "all" | "settings">("today");
   const { toast } = useToast();
-  const [isTelegram, setIsTelegram] = useState(false);
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [isCreating, setIsCreating] = useState(false);
+  const [view, setView] = useState<"month" | "list">("month");
   
-  // Проверяем, запущено ли приложение в Telegram
-  useState(() => {
-    setIsTelegram(isTelegramWebApp());
+  const { data: events = [], isLoading, refetch } = useQuery({
+    queryKey: ['events'],
+    queryFn: fetchEvents
   });
-
-  const handleCreateEvent = (data: CreateEventData) => {
-    const newEvent: ScheduleEvent = {
-      id: crypto.randomUUID(),
-      ...data,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
-    
-    setEvents((prev) => [...prev, newEvent].sort((a, b) => 
-      new Date(a.startTime).getTime() - new Date(b.startTime).getTime()
-    ));
+  
+  const handleDateSelect = (date: Date) => {
+    setSelectedDate(date);
+  };
+  
+  const handleCreateEvent = async (eventData: any) => {
+    // В реальном приложении здесь был бы API-запрос для создания события
+    console.log("Creating event:", eventData);
     
     toast({
       title: "Событие создано",
-      description: "Новое событие было успешно добавлено в расписание",
+      description: `Событие "${eventData.title}" успешно добавлено в календарь`
     });
-  };
-
-  const handleDeleteEvent = (id: string) => {
-    setEvents((prevEvents) => prevEvents.filter((event) => event.id !== id));
     
-    toast({
-      title: "Событие удалено",
-      description: "Событие было удалено из расписания",
-    });
+    setIsCreating(false);
+    refetch();
   };
-
-  // Фильтрация событий для сегодняшнего дня
-  const isToday = (date: Date) => {
-    const today = new Date();
-    return (
-      date.getDate() === today.getDate() &&
-      date.getMonth() === today.getMonth() &&
-      date.getFullYear() === today.getFullYear()
-    );
-  };
-
-  const todayEvents = events.filter(event => isToday(new Date(event.startTime)));
-  const filteredEvents = activeTab === "today" ? todayEvents : events;
-
+  
   return (
     <div className="space-y-6 fade-in">
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-2xl font-semibold">Моё расписание</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <EventForm onSubmit={handleCreateEvent} />
-        </CardContent>
-      </Card>
-
-      <Tabs defaultValue="today" value={activeTab} onValueChange={(v) => setActiveTab(v as any)}>
-        <TabsList className="w-full mb-4">
-          <TabsTrigger value="today" className="flex-1">Сегодня</TabsTrigger>
-          <TabsTrigger value="all" className="flex-1">Все события</TabsTrigger>
-          {isTelegram && (
-            <TabsTrigger value="settings" className="flex-1">Уведомления</TabsTrigger>
-          )}
-        </TabsList>
-        
-        <TabsContent value="today" className="space-y-4">
-          {todayEvents.length > 0 ? (
-            todayEvents.map((event) => (
-              <EventItem
-                key={event.id}
-                event={event}
-                onDelete={handleDeleteEvent}
-              />
-            ))
-          ) : (
-            <Card>
-              <CardContent className="py-8">
-                <p className="text-center text-muted-foreground">
-                  Нет событий на сегодня. Добавьте новое событие, чтобы начать планирование дня.
-                </p>
-              </CardContent>
-            </Card>
-          )}
-        </TabsContent>
-        
-        <TabsContent value="all" className="space-y-4">
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-semibold">Расписание</h1>
+        <div className="flex items-center space-x-2">
+          <Tabs value={view} onValueChange={(v) => setView(v as "month" | "list")}>
+            <TabsList>
+              <TabsTrigger value="month">Месяц</TabsTrigger>
+              <TabsTrigger value="list">Список</TabsTrigger>
+            </TabsList>
+          </Tabs>
+          <Button onClick={() => setIsCreating(true)}>
+            <PlusCircle className="h-4 w-4 mr-2" />
+            Добавить событие
+          </Button>
+        </div>
+      </div>
+      
+      <TabsContent value="month" className="mt-0">
+        <EnhancedCalendar 
+          events={events}
+          onDateSelect={handleDateSelect}
+          selectedDate={selectedDate}
+        />
+      </TabsContent>
+      
+      <TabsContent value="list" className="mt-0">
+        <div className="space-y-4">
           {events.length > 0 ? (
-            events.map((event) => (
-              <EventItem
-                key={event.id}
-                event={event}
-                onDelete={handleDeleteEvent}
-              />
-            ))
+            events
+              .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+              .map(event => (
+                <div key={event.id} className="flex items-center p-3 border rounded-md">
+                  <div className="flex-1">
+                    <h3 className="font-medium">{event.title}</h3>
+                    <div className="text-sm text-muted-foreground">
+                      {format(new Date(event.date), "dd.MM.yyyy")} в {event.time}
+                    </div>
+                    {event.description && (
+                      <div className="text-sm mt-1">{event.description}</div>
+                    )}
+                  </div>
+                </div>
+              ))
           ) : (
-            <Card>
-              <CardContent className="py-8">
-                <p className="text-center text-muted-foreground">
-                  События отсутствуют. Создайте новое событие выше.
-                </p>
-              </CardContent>
-            </Card>
+            <div className="text-center py-8 text-muted-foreground">
+              У вас пока нет запланированных событий
+            </div>
           )}
-        </TabsContent>
-        
-        {isTelegram && (
-          <TabsContent value="settings" className="space-y-4">
-            <NotificationSettings />
-          </TabsContent>
-        )}
-      </Tabs>
+        </div>
+      </TabsContent>
+      
+      {isCreating && (
+        <EventForm
+          onSubmit={handleCreateEvent}
+          onCancel={() => setIsCreating(false)}
+          initialDate={selectedDate}
+        />
+      )}
     </div>
   );
 }
