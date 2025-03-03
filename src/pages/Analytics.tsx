@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -8,9 +7,16 @@ import {
 } from "recharts";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { AlertCircle } from "lucide-react";
+import { AlertCircle, ChevronDown } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
+import { 
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
-// Локализация интерфейса
 const locales = {
   ru: {
     title: "Аналитика",
@@ -140,11 +146,182 @@ const locales = {
   }
 };
 
-// Компонент для отображения аналитики по задачам
+function ChartSettings({ locale }) {
+  const t = locales[locale];
+  const [chartTypes, setChartTypes] = useState({
+    tasks: {
+      weekly: "bar",
+      categories: "pie"
+    },
+    habits: {
+      progress: "bar",
+      dynamics: "line"
+    },
+    schedule: {
+      distribution: "pie",
+      timeDistribution: "bar"
+    }
+  });
+  
+  const [autoRefresh, setAutoRefresh] = useState(false);
+  
+  return (
+    <Card className="mb-6">
+      <CardHeader>
+        <CardTitle>{locale === "ru" ? "Настройки графиков" : (locale === "zh" ? "图表设置" : "Chart Settings")}</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div className="space-y-4">
+          <div>
+            <h3 className="text-sm font-medium mb-2">{locale === "ru" ? "Выбор типа графиков" : (locale === "zh" ? "图表类型选择" : "Chart Type Selection")}</h3>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div>
+                <p className="text-sm text-muted-foreground mb-2">{t.tabs.tasks}</p>
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs">{t.task.weeklyTitle}</span>
+                    <Select 
+                      value={chartTypes.tasks.weekly} 
+                      onValueChange={(value) => setChartTypes({
+                        ...chartTypes,
+                        tasks: {...chartTypes.tasks, weekly: value}
+                      })}
+                    >
+                      <SelectTrigger className="w-24 h-7">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="bar">Bar</SelectItem>
+                        <SelectItem value="line">Line</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs">{t.task.categoriesTitle}</span>
+                    <Select 
+                      value={chartTypes.tasks.categories} 
+                      onValueChange={(value) => setChartTypes({
+                        ...chartTypes,
+                        tasks: {...chartTypes.tasks, categories: value}
+                      })}
+                    >
+                      <SelectTrigger className="w-24 h-7">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="pie">Pie</SelectItem>
+                        <SelectItem value="bar">Bar</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+              </div>
+              
+              <div>
+                <p className="text-sm text-muted-foreground mb-2">{t.tabs.habits}</p>
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs">{t.habit.progressTitle}</span>
+                    <Select 
+                      value={chartTypes.habits.progress} 
+                      onValueChange={(value) => setChartTypes({
+                        ...chartTypes,
+                        habits: {...chartTypes.habits, progress: value}
+                      })}
+                    >
+                      <SelectTrigger className="w-24 h-7">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="bar">Bar</SelectItem>
+                        <SelectItem value="line">Line</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs">{t.habit.dynamicsTitle}</span>
+                    <Select 
+                      value={chartTypes.habits.dynamics} 
+                      onValueChange={(value) => setChartTypes({
+                        ...chartTypes,
+                        habits: {...chartTypes.habits, dynamics: value}
+                      })}
+                    >
+                      <SelectTrigger className="w-24 h-7">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="line">Line</SelectItem>
+                        <SelectItem value="bar">Bar</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+              </div>
+              
+              <div>
+                <p className="text-sm text-muted-foreground mb-2">{t.tabs.schedule}</p>
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs">{t.schedule.distributionTitle}</span>
+                    <Select 
+                      value={chartTypes.schedule.distribution} 
+                      onValueChange={(value) => setChartTypes({
+                        ...chartTypes,
+                        schedule: {...chartTypes.schedule, distribution: value}
+                      })}
+                    >
+                      <SelectTrigger className="w-24 h-7">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="pie">Pie</SelectItem>
+                        <SelectItem value="bar">Bar</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs">{t.schedule.timeDistributionTitle}</span>
+                    <Select 
+                      value={chartTypes.schedule.timeDistribution} 
+                      onValueChange={(value) => setChartTypes({
+                        ...chartTypes,
+                        schedule: {...chartTypes.schedule, timeDistribution: value}
+                      })}
+                    >
+                      <SelectTrigger className="w-24 h-7">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="bar">Bar</SelectItem>
+                        <SelectItem value="line">Line</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div className="flex items-center space-x-2 pt-2">
+            <Switch 
+              id="auto-refresh" 
+              checked={autoRefresh}
+              onCheckedChange={setAutoRefresh}
+            />
+            <Label htmlFor="auto-refresh">
+              {locale === "ru" ? "Автоматическое обновление" : (locale === "zh" ? "自动刷新" : "Auto-refresh")}
+            </Label>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
 function TaskAnalytics({ locale }) {
   const t = locales[locale];
   
-  // Данные о выполнении задач по дням недели
   const weeklyData = [
     { name: locale === 'ru' ? "Пн" : (locale === 'zh' ? "周一" : "Mon"), 
       [t.task.planned]: 6, [t.task.completed]: 4 },
@@ -162,7 +339,6 @@ function TaskAnalytics({ locale }) {
       [t.task.planned]: 2, [t.task.completed]: 1 },
   ];
 
-  // Данные по категориям задач
   const categoriesData = [
     { name: locale === 'ru' ? "Работа" : (locale === 'zh' ? "工作" : "Work"), value: 40 },
     { name: locale === 'ru' ? "Учеба" : (locale === 'zh' ? "学习" : "Study"), value: 25 },
@@ -171,7 +347,6 @@ function TaskAnalytics({ locale }) {
     { name: locale === 'ru' ? "Другое" : (locale === 'zh' ? "其他" : "Other"), value: 5 },
   ];
 
-  // Цвета для диаграммы
   const COLORS = ["#3b82f6", "#ef4444", "#10b981", "#f59e0b", "#8b5cf6"];
 
   return (
@@ -231,11 +406,9 @@ function TaskAnalytics({ locale }) {
   );
 }
 
-// Компонент для отображения аналитики по привычкам
 function HabitAnalytics({ locale }) {
   const t = locales[locale];
   
-  // Данные о прогрессе выполнения привычек
   const progressData = [
     { name: locale === 'ru' ? "Медитация" : (locale === 'zh' ? "冥想" : "Meditation"), 
       [t.habit.progress]: 85 },
@@ -249,7 +422,6 @@ function HabitAnalytics({ locale }) {
       [t.habit.progress]: 55 },
   ];
 
-  // Данные о выполнении привычек по дням
   const monthlyData = [
     { [t.habit.day]: "1", [t.habit.performed]: 3 },
     { [t.habit.day]: "4", [t.habit.performed]: 4 },
@@ -319,11 +491,9 @@ function HabitAnalytics({ locale }) {
   );
 }
 
-// Компонент для отображения аналитики расписания
 function ScheduleAnalytics({ locale }) {
   const t = locales[locale];
   
-  // Данные о распределении событий по категориям
   const eventCategoriesData = [
     { name: locale === 'ru' ? "Встречи" : (locale === 'zh' ? "会议" : "Meetings"), value: 30 },
     { name: locale === 'ru' ? "Работа" : (locale === 'zh' ? "工作" : "Work"), value: 35 },
@@ -331,10 +501,8 @@ function ScheduleAnalytics({ locale }) {
     { name: locale === 'ru' ? "Личное" : (locale === 'zh' ? "个人" : "Personal"), value: 15 },
   ];
   
-  // Цвета для диаграммы
   const COLORS = ["#3b82f6", "#ef4444", "#10b981", "#f59e0b"];
 
-  // Данные о занятости по часам дня
   const hourlyData = [
     { [t.schedule.hour]: "6-8", [t.schedule.amount]: 1 },
     { [t.schedule.hour]: "8-10", [t.schedule.amount]: 3 },
@@ -404,6 +572,7 @@ function ScheduleAnalytics({ locale }) {
 export default function Analytics() {
   const [activeTab, setActiveTab] = useState("tasks");
   const [locale, setLocale] = useState<"ru" | "en" | "zh">("ru");
+  const [showSettings, setShowSettings] = useState(false);
   const t = locales[locale];
 
   return (
@@ -433,6 +602,12 @@ export default function Analytics() {
             <Button variant="outline" size="sm">
               {t.ui.exportData}
             </Button>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={() => setShowSettings(!showSettings)}>
+              {locale === "ru" ? "Настройки графиков" : (locale === "zh" ? "图表设置" : "Chart Settings")}
+            </Button>
           </div>
         </CardHeader>
         <CardContent>
@@ -440,6 +615,8 @@ export default function Analytics() {
             <AlertCircle className="h-5 w-5 mt-0.5 flex-shrink-0" />
             <p className="text-sm">{t.ui.tip}</p>
           </div>
+
+          {showSettings && <ChartSettings locale={locale} />}
 
           <Tabs defaultValue="tasks" value={activeTab} onValueChange={setActiveTab}>
             <TabsList className="w-full mb-6">
