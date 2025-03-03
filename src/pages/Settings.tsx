@@ -1,3 +1,4 @@
+
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Label } from "@/components/ui/label";
@@ -24,6 +25,10 @@ export default function Settings() {
 
   const changeLanguage = (lng: string) => {
     i18n.changeLanguage(lng);
+  };
+
+  const handleThemeChange = (value: string) => {
+    setTheme(value as "light" | "dark");
   };
 
   return (
@@ -84,7 +89,7 @@ export default function Settings() {
                 <Label htmlFor="email-notifications">
                   {t("settings.notifications.emailFrequency")}
                 </Label>
-                <Select defaultValue="daily" id="email-notifications">
+                <Select defaultValue="daily">
                   <SelectTrigger className="w-[180px]">
                     <SelectValue placeholder={t("settings.notifications.selectFrequency")} />
                   </SelectTrigger>
@@ -100,7 +105,7 @@ export default function Settings() {
             <TabsContent value="display" className="space-y-4">
               <div className="flex items-center justify-between">
                 <Label htmlFor="theme">{t("settings.display.theme")}</Label>
-                <Select onValueChange={setTheme} defaultValue={theme}>
+                <Select onValueChange={handleThemeChange} defaultValue={theme}>
                   <SelectTrigger className="w-[180px]">
                     <SelectValue placeholder={t("settings.display.selectTheme")} />
                   </SelectTrigger>
@@ -112,7 +117,7 @@ export default function Settings() {
               </div>
               <div className="space-y-2">
                 <Label htmlFor="font-size">{t("settings.display.fontSize")}</Label>
-                <Select defaultValue="medium" id="font-size">
+                <Select defaultValue="medium">
                   <SelectTrigger className="w-[180px]">
                     <SelectValue placeholder={t("settings.display.selectSize")} />
                   </SelectTrigger>
@@ -189,7 +194,7 @@ export default function Settings() {
                             <div className="space-y-2">
                               <Label htmlFor="subject">{t('settings.support.subject', 'Тема')}</Label>
                               <Select>
-                                <SelectTrigger id="subject">
+                                <SelectTrigger>
                                   <SelectValue placeholder={t('settings.support.selectSubject', 'Выберите тему')} />
                                 </SelectTrigger>
                                 <SelectContent>
