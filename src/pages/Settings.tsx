@@ -17,7 +17,7 @@ import { useTranslation } from "react-i18next";
 import { LANGUAGES } from "@/constants";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { MessageSquare } from "lucide-react";
-import { toast } from "sonner";
+import { useToast } from "@/hooks/use-toast";
 
 // Интерфейс для сообщений чата
 interface ChatMessage {
@@ -66,6 +66,7 @@ export default function Settings() {
   const { t, i18n } = useTranslation();
   const [theme, setTheme] = useState<"light" | "dark">("light");
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
+  const { toast } = useToast();
   
   // Состояние для чата поддержки
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([
@@ -83,8 +84,8 @@ export default function Settings() {
     i18n.changeLanguage(lng);
   };
 
-  const handleThemeChange = (value: string) => {
-    setTheme(value as "light" | "dark");
+  const handleThemeChange = (value: "light" | "dark") => {
+    setTheme(value);
   };
   
   // Функция для отправки сообщения в чат
@@ -133,7 +134,6 @@ export default function Settings() {
     setShowFaq(false);
     
     toast({
-      title: "Ответ отправлен",
       description: "Если у вас остались вопросы, напишите нам"
     });
   };
@@ -151,7 +151,6 @@ export default function Settings() {
     setShowFaq(false);
     
     toast({
-      title: "Запрос отправлен",
       description: "Специалист скоро подключится к чату"
     });
   };
