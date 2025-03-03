@@ -9,18 +9,10 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { EventItem } from "./EventItem";
-
-interface CalendarEvent {
-  id: string;
-  title: string;
-  date: Date;
-  time?: string;
-  description?: string;
-  category?: string;
-}
+import { ScheduleEvent } from "@/types/schedule";
 
 interface EnhancedCalendarProps {
-  events: CalendarEvent[];
+  events: ScheduleEvent[];
   onDateSelect: (date: Date) => void;
   selectedDate: Date;
 }
@@ -45,12 +37,12 @@ export function EnhancedCalendar({ events, onDateSelect, selectedDate }: Enhance
   
   // Получаем события на выбранную дату
   const selectedDateEvents = events.filter(event => 
-    isSameDay(new Date(event.date), selectedDate)
+    isSameDay(new Date(event.startTime), selectedDate)
   );
   
   // Проверяем, есть ли события в конкретный день
   const hasEventsOnDay = (day: Date) => {
-    return events.some(event => isSameDay(new Date(event.date), day));
+    return events.some(event => isSameDay(new Date(event.startTime), day));
   };
   
   return (
@@ -124,6 +116,7 @@ export function EnhancedCalendar({ events, onDateSelect, selectedDate }: Enhance
                   <EventItem
                     key={event.id}
                     event={event}
+                    onDelete={() => {}} // Adding an empty onDelete function to match the required prop
                   />
                 ))
               ) : (

@@ -2,6 +2,7 @@
 import { CalendarDays, BookOpen, ListTodo, ActivitySquare, Settings, BarChart } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Link, useLocation } from "react-router-dom";
+import { useMobile } from "@/hooks/use-mobile";
 
 const navigation = [
   { name: "Дневник", href: "/diary", icon: BookOpen },
@@ -14,6 +15,7 @@ const navigation = [
 
 export function Sidebar() {
   const location = useLocation();
+  const isMobile = useMobile();
 
   return (
     <div className="flex flex-col w-64 bg-card border-r">

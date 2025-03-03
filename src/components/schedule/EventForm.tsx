@@ -16,9 +16,11 @@ import { CreateEventData, EventFrequency, ReminderTime } from "@/types/schedule"
 
 interface EventFormProps {
   onSubmit: (data: CreateEventData) => void;
+  initialDate?: Date;
+  onCancel?: () => void; // Making this optional since not all usages include it
 }
 
-export function EventForm({ onSubmit }: EventFormProps) {
+export function EventForm({ onSubmit, initialDate = new Date(), onCancel }: EventFormProps) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [location, setLocation] = useState("");
@@ -147,9 +149,16 @@ export function EventForm({ onSubmit }: EventFormProps) {
         </div>
       </div>
       
-      <Button type="submit" className="w-full">
-        Добавить событие
-      </Button>
+      <div className="flex justify-between gap-4">
+        <Button type="submit" className="flex-1">
+          Добавить событие
+        </Button>
+        {onCancel && (
+          <Button type="button" variant="outline" onClick={onCancel} className="flex-1">
+            Отмена
+          </Button>
+        )}
+      </div>
     </form>
   );
 }
