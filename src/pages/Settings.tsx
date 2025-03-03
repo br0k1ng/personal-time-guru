@@ -17,11 +17,67 @@ import { useTranslation } from "react-i18next";
 import { LANGUAGES } from "@/constants";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { MessageSquare } from "lucide-react";
+import { toast } from "sonner";
+
+// Интерфейс для сообщений чата
+interface ChatMessage {
+  id: string;
+  text: string;
+  sender: "user" | "support";
+  timestamp: Date;
+}
+
+// FAQ вопросы и ответы для быстрого ответа
+interface FAQItem {
+  id: string;
+  question: string;
+  answer: string;
+}
+
+const faqItems: FAQItem[] = [
+  {
+    id: "faq1",
+    question: "Как создать новую задачу?",
+    answer: "Чтобы создать новую задачу, перейдите в раздел 'Задачи' и нажмите кнопку 'Создать задачу'. Заполните необходимые поля и нажмите 'Сохранить'."
+  },
+  {
+    id: "faq2",
+    question: "Как настроить привычки?",
+    answer: "Для настройки привычек перейдите в раздел 'Привычки'. Там вы можете создавать новые привычки, устанавливать периодичность и отслеживать прогресс."
+  },
+  {
+    id: "faq3",
+    question: "Как настроить уведомления?",
+    answer: "Настройки уведомлений доступны в разделе 'Настройки' на вкладке 'Уведомления'. Здесь вы можете указать, какие уведомления хотите получать и выбрать время их получения."
+  },
+  {
+    id: "faq4",
+    question: "Как изменить язык приложения?",
+    answer: "Для изменения языка перейдите в раздел 'Настройки' на вкладке 'Общие'. В выпадающем меню выберите нужный язык интерфейса."
+  },
+  {
+    id: "faq5",
+    question: "Как посмотреть аналитику?",
+    answer: "Для просмотра аналитики перейдите в раздел 'Аналитика'. Там вы найдете различные графики и статистику по выполнению задач, привычек и расписания."
+  }
+];
 
 export default function Settings() {
   const { t, i18n } = useTranslation();
   const [theme, setTheme] = useState<"light" | "dark">("light");
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
+  
+  // Состояние для чата поддержки
+  const [chatMessages, setChatMessages] = useState<ChatMessage[]>([
+    {
+      id: "1",
+      text: "Добро пожаловать в службу поддержки! Чем мы можем вам помочь?",
+      sender: "support",
+      timestamp: new Date()
+    }
+  ]);
+  const [newMessage, setNewMessage] = useState("");
+  const [showFaq, setShowFaq] = useState(true);
 
   const changeLanguage = (lng: string) => {
     i18n.changeLanguage(lng);
@@ -29,6 +85,75 @@ export default function Settings() {
 
   const handleThemeChange = (value: string) => {
     setTheme(value as "light" | "dark");
+  };
+  
+  // Функция для отправки сообщения в чат
+  const handleSendMessage = () => {
+    if (!newMessage.trim()) return;
+    
+    // Добавляем сообщение пользователя
+    const userMessage: ChatMessage = {
+      id: Date.now().toString(),
+      text: newMessage,
+      sender: "user",
+      timestamp: new Date()
+    };
+    
+    setChatMessages(prev => [...prev, userMessage]);
+    setNewMessage("");
+    
+    // Если пользователь отправил "помощь" или "help", показываем список FAQ
+    if (newMessage.toLowerCase().includes("помощь") || newMessage.toLowerCase().includes("help")) {
+      setShowFaq(true);
+    } else {
+      // Имитация ответа от поддержки через 1 секунду
+      setTimeout(() => {
+        const supportMessage: ChatMessage = {
+          id: (Date.now() + 1).toString(),
+          text: "Благодарим за обращение. Наш специалист свяжется с вами в ближайшее время.",
+          sender: "support",
+          timestamp: new Date()
+        };
+        
+        setChatMessages(prev => [...prev, supportMessage]);
+      }, 1000);
+    }
+  };
+  
+  // Функция для использования готового ответа из FAQ
+  const handleFaqSelect = (answer: string) => {
+    const faqMessage: ChatMessage = {
+      id: Date.now().toString(),
+      text: answer,
+      sender: "support",
+      timestamp: new Date()
+    };
+    
+    setChatMessages(prev => [...prev, faqMessage]);
+    setShowFaq(false);
+    
+    toast({
+      title: "Ответ отправлен",
+      description: "Если у вас остались вопросы, напишите нам"
+    });
+  };
+  
+  // Функция для запроса живого специалиста
+  const requestLiveSupport = () => {
+    const systemMessage: ChatMessage = {
+      id: Date.now().toString(),
+      text: "Запрос отправлен. Специалист подключится к чату в течение 5 минут.",
+      sender: "support",
+      timestamp: new Date()
+    };
+    
+    setChatMessages(prev => [...prev, systemMessage]);
+    setShowFaq(false);
+    
+    toast({
+      title: "Запрос отправлен",
+      description: "Специалист скоро подключится к чату"
+    });
   };
 
   return (
@@ -132,95 +257,87 @@ export default function Settings() {
             <TabsContent value="support" className="space-y-4">
               <Card>
                 <CardHeader>
-                  <CardTitle>{t('settings.support.faqTitle', 'Часто задаваемые вопросы')}</CardTitle>
+                  <CardTitle>{t('settings.support.chatTitle', 'Чат с поддержкой')}</CardTitle>
+                  <CardDescription>{t('settings.support.chatDescription', 'Задайте вопрос или выберите из частых вопросов')}</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <Accordion type="single" collapsible className="w-full">
-                    <AccordionItem value="item-1">
-                      <AccordionTrigger>{t('settings.support.faq1', 'Как создать новую задачу?')}</AccordionTrigger>
-                      <AccordionContent>
-                        {t('settings.support.faq1Answer', 'Чтобы создать новую задачу, перейдите в раздел "Задачи" и нажмите кнопку "Создать задачу". Заполните необходимые поля и нажмите "Сохранить".')}
-                      </AccordionContent>
-                    </AccordionItem>
-                    <AccordionItem value="item-2">
-                      <AccordionTrigger>{t('settings.support.faq2', 'Как настроить привычки?')}</AccordionTrigger>
-                      <AccordionContent>
-                        {t('settings.support.faq2Answer', 'Для настройки привычек перейдите в раздел "Привычки". Там вы можете создавать новые привычки, устанавливать периодичность и отслеживать прогресс.')}
-                      </AccordionContent>
-                    </AccordionItem>
-                    <AccordionItem value="item-3">
-                      <AccordionTrigger>{t('settings.support.faq3', 'Как настроить уведомления?')}</AccordionTrigger>
-                      <AccordionContent>
-                        {t('settings.support.faq3Answer', 'Настройки уведомлений доступны в разделе "Настройки" на вкладке "Уведомления". Здесь вы можете указать, какие уведомления хотите получать и выбрать время их получения.')}
-                      </AccordionContent>
-                    </AccordionItem>
-                    <AccordionItem value="item-4">
-                      <AccordionTrigger>{t('settings.support.faq4', 'Как изменить язык приложения?')}</AccordionTrigger>
-                      <AccordionContent>
-                        {t('settings.support.faq4Answer', 'Для изменения языка перейдите в раздел "Настройки" на вкладку "Общие". В выпадающем меню выберите нужный язык интерфейса.')}
-                      </AccordionContent>
-                    </AccordionItem>
-                    <AccordionItem value="item-5">
-                      <AccordionTrigger>{t('settings.support.faq5', 'Как посмотреть аналитику?')}</AccordionTrigger>
-                      <AccordionContent>
-                        {t('settings.support.faq5Answer', 'Для просмотра аналитики перейдите в раздел "Аналитика". Там вы найдете различные графики и статистику по выполнению задач, привычек и расписания.')}
-                      </AccordionContent>
-                    </AccordionItem>
-                  </Accordion>
-
-                  <div className="mt-8 flex flex-col gap-4">
-                    <h3 className="text-lg font-medium">{t('settings.support.needMoreHelp', 'Нужна дополнительная помощь?')}</h3>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <Card className="border border-dashed hover:border-solid transition-all cursor-pointer">
-                        <CardContent className="flex flex-col items-center justify-center p-6 text-center">
-                          <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
-                            <MessageSquare className="h-6 w-6 text-primary" />
+                  <div className="h-[400px] flex flex-col relative">
+                    {/* Чат с сообщениями */}
+                    <div className="flex-1 overflow-y-auto mb-4 p-4 border rounded-lg">
+                      {chatMessages.map((message) => (
+                        <div 
+                          key={message.id} 
+                          className={`mb-3 flex ${message.sender === "user" ? "justify-end" : "justify-start"}`}
+                        >
+                          <div 
+                            className={`px-4 py-2 rounded-lg max-w-[80%] ${
+                              message.sender === "user" 
+                                ? "bg-primary text-primary-foreground ml-auto" 
+                                : "bg-muted"
+                            }`}
+                          >
+                            <p>{message.text}</p>
+                            <p className="text-xs opacity-70 mt-1">
+                              {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                            </p>
                           </div>
-                          <h3 className="font-medium mb-2">{t('settings.support.chatSupport', 'Чат с поддержкой')}</h3>
-                          <p className="text-sm text-muted-foreground">
-                            {t('settings.support.chatSupportDesc', 'Свяжитесь с нашим специалистом напрямую через чат')}
-                          </p>
-                          <Button className="mt-4" variant="outline">
-                            {t('settings.support.startChat', 'Начать чат')}
-                          </Button>
-                        </CardContent>
-                      </Card>
-
-                      <Card className="bg-muted/50">
-                        <CardContent className="p-6">
-                          <h3 className="font-medium mb-4">{t('settings.support.feedback', 'Обратная связь')}</h3>
-                          <form className="space-y-4">
-                            <div className="space-y-2">
-                              <Label htmlFor="subject">{t('settings.support.subject', 'Тема')}</Label>
-                              <Select>
-                                <SelectTrigger>
-                                  <SelectValue placeholder={t('settings.support.selectSubject', 'Выберите тему')} />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  <SelectItem value="bug">{t('settings.support.bug', 'Ошибка')}</SelectItem>
-                                  <SelectItem value="feature">{t('settings.support.feature', 'Предложение функции')}</SelectItem>
-                                  <SelectItem value="question">{t('settings.support.question', 'Вопрос')}</SelectItem>
-                                  <SelectItem value="other">{t('settings.support.other', 'Другое')}</SelectItem>
-                                </SelectContent>
-                              </Select>
-                            </div>
-                            <div className="space-y-2">
-                              <Label htmlFor="message">{t('settings.support.message', 'Сообщение')}</Label>
-                              <textarea
-                                id="message"
-                                rows={3}
-                                className="w-full min-h-24 rounded-md border border-input bg-transparent px-3 py-2 text-sm ring-offset-background"
-                                placeholder={t('settings.support.messagePlaceholder', 'Опишите вашу проблему или предложение...')}
-                              ></textarea>
-                            </div>
-                            <Button type="submit" className="w-full">
-                              {t('settings.support.send', 'Отправить')}
-                            </Button>
-                          </form>
-                        </CardContent>
-                      </Card>
+                        </div>
+                      ))}
                     </div>
+                    
+                    {/* FAQ секция, показывается при необходимости */}
+                    {showFaq && (
+                      <div className="absolute bottom-16 left-0 right-0 bg-card border rounded-lg p-4 shadow-lg">
+                        <h3 className="text-lg font-medium mb-2">Частые вопросы:</h3>
+                        <div className="space-y-2 mb-4">
+                          {faqItems.map((item) => (
+                            <div 
+                              key={item.id}
+                              className="p-2 bg-background hover:bg-muted rounded cursor-pointer transition-colors"
+                              onClick={() => handleFaqSelect(item.answer)}
+                            >
+                              {item.question}
+                            </div>
+                          ))}
+                        </div>
+                        <div className="flex justify-between">
+                          <Button variant="outline" onClick={() => setShowFaq(false)}>
+                            Закрыть
+                          </Button>
+                          <Button onClick={requestLiveSupport}>
+                            Связаться со специалистом
+                          </Button>
+                        </div>
+                      </div>
+                    )}
+                    
+                    {/* Форма отправки сообщения */}
+                    <div className="flex gap-2">
+                      <Input
+                        placeholder="Введите сообщение..."
+                        value={newMessage}
+                        onChange={(e) => setNewMessage(e.target.value)}
+                        onKeyPress={(e) => e.key === "Enter" && handleSendMessage()}
+                      />
+                      <Button onClick={handleSendMessage}>Отправить</Button>
+                      <Button variant="outline" onClick={() => setShowFaq(!showFaq)}>
+                        FAQ
+                      </Button>
+                    </div>
+                  </div>
+                  
+                  <div className="mt-8">
+                    <h3 className="text-lg font-medium mb-4">FAQ - Часто задаваемые вопросы</h3>
+                    <Accordion type="single" collapsible className="w-full">
+                      {faqItems.map((item) => (
+                        <AccordionItem key={item.id} value={item.id}>
+                          <AccordionTrigger>{item.question}</AccordionTrigger>
+                          <AccordionContent>
+                            {item.answer}
+                          </AccordionContent>
+                        </AccordionItem>
+                      ))}
+                    </Accordion>
                   </div>
                 </CardContent>
               </Card>
