@@ -9,9 +9,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { 
   Globe, Users, Key, Clock, Archive, Share2, Copy, Gift, CreditCard, CheckCircle, 
-  User, Trash2, BarChart, LineChart, PieChart, FileText, Camera, Upload, AlertTriangle, Bell
+  User, Trash2, BarChart, LineChart, PieChart, FileText, Camera, Upload, AlertTriangle, Bell,
+  MessageCircle, Send, ThumbsUp 
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -19,6 +21,20 @@ import { useSubscription } from "@/contexts/SubscriptionContext";
 import { useArchive } from "@/contexts/ArchiveContext";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+
+interface ChatMessage {
+  id: string;
+  text: string;
+  sender: "user" | "support";
+  timestamp: Date;
+}
+
+interface FeedbackData {
+  type: string;
+  subject: string;
+  message: string;
+  rating?: number;
+}
 
 export default function Settings() {
   const { t } = useLanguage();
@@ -40,41 +56,48 @@ export default function Settings() {
   const [newAccessCode, setNewAccessCode] = useState("");
   const [userEmail, setUserEmail] = useState("");
   
-  // Настройки профиля
   const [userName, setUserName] = useState("");
   const [userBio, setUserBio] = useState("");
   const [userAvatar, setUserAvatar] = useState<string | null>(null);
   
-  // Настройки отчетов
   const [reportFrequency, setReportFrequency] = useState("weekly");
   const [reportTasks, setReportTasks] = useState(true);
   const [reportHabits, setReportHabits] = useState(true);
   const [reportSchedule, setReportSchedule] = useState(false);
   
-  // Настройки графиков
   const [preferredChartType, setPreferredChartType] = useState("bar");
   
-  // Настройки уведомлений
   const [notificationEnabled, setNotificationEnabled] = useState(true);
   const [quietHoursEnabled, setQuietHoursEnabled] = useState(false);
   const [quietHoursStart, setQuietHoursStart] = useState("22:00");
   const [quietHoursEnd, setQuietHoursEnd] = useState("07:00");
   
-  // Загрузка данных пользователя
+  const [chatMessages, setChatMessages] = useState<ChatMessage[]>([
+    {
+      id: "1",
+      text: "Добро пожаловать в службу поддержки! Чем мы можем вам помочь?",
+      sender: "support",
+      timestamp: new Date()
+    }
+  ]);
+  const [newMessage, setNewMessage] = useState("");
+  
+  const [feedbackData, setFeedbackData] = useState<FeedbackData>({
+    type: "suggestion",
+    subject: "",
+    message: ""
+  });
+  
   useEffect(() => {
     if (currentUser) {
       setUserName(currentUser.name);
-      // В реальном приложении здесь бы загружались остальные данные профиля
     }
   }, [currentUser]);
   
-  // Загрузка аватара
   const handleAvatarUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
     
-    // В реальном приложении файл бы отправлялся на сервер
-    // Здесь просто создаем URL для предпросмотра
     const reader = new FileReader();
     reader.onload = () => {
       setUserAvatar(reader.result as string);
@@ -86,16 +109,13 @@ export default function Settings() {
     reader.readAsDataURL(file);
   };
   
-  // Сохранение профиля
   const handleSaveProfile = () => {
-    // В реальном приложении данные отправлялись бы на сервер
     toast({
       title: "Профиль сохранен",
       description: "Ваши данные успешно обновлены",
     });
   };
 
-  // Функция копирования в буфер обмена
   const handleCopyReferralCode = () => {
     if (currentUser?.referralCode) {
       navigator.clipboard.writeText(currentUser.referralCode);
@@ -106,7 +126,6 @@ export default function Settings() {
     }
   };
 
-  // Активация промокода
   const handleActivatePromoCode = async () => {
     if (!promoCode.trim()) {
       toast({
@@ -134,7 +153,6 @@ export default function Settings() {
     }
   };
 
-  // Генерация кода доступа
   const handleGenerateAccessCode = async () => {
     const code = await generateAccessCode();
     setNewAccessCode(code);
@@ -145,7 +163,6 @@ export default function Settings() {
     });
   };
 
-  // Выдача доступа пользователю
   const handleGiveAccess = () => {
     if (!userEmail.trim() || !accessCode.trim()) {
       toast({
@@ -156,7 +173,6 @@ export default function Settings() {
       return;
     }
     
-    // В реальном приложении здесь был бы API запрос
     toast({
       title: "Доступ выдан",
       description: `Пользователю ${userEmail} выдан доступ с кодом ${accessCode}`,
@@ -166,7 +182,6 @@ export default function Settings() {
     setAccessCode("");
   };
 
-  // Обновление настроек архива
   const handleArchiveSettingsChange = (key: keyof typeof archiveSettings, value: number) => {
     updateArchiveSettings({ [key]: value });
     
@@ -176,34 +191,27 @@ export default function Settings() {
     });
   };
   
-  // Сохранение настроек отчетов
   const handleSaveReportSettings = () => {
-    // В реальном приложении настройки отправлялись бы на сервер
     toast({
       title: "Настройки сохранены",
       description: "Настройки отчетов успешно обновлены",
     });
   };
   
-  // Сохранение настроек графиков
   const handleSaveChartSettings = () => {
-    // В реальном приложении настройки отправлялись бы на сервер
     toast({
       title: "Настройки сохранены",
       description: "Настройки графиков успешно обновлены",
     });
   };
   
-  // Сохранение настроек уведомлений
   const handleSaveNotificationSettings = () => {
-    // В реальном приложении настройки отправлялись бы на сервер
     toast({
       title: "Настройки сохранены",
       description: "Настройки уведомлений успешно обновлены",
     });
   };
   
-  // Удаление аккаунта
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [deleteConfirmText, setDeleteConfirmText] = useState("");
   
@@ -217,13 +225,63 @@ export default function Settings() {
       return;
     }
     
-    // В реальном приложении здесь был бы API запрос на удаление
     toast({
       title: "Аккаунт удален",
       description: "Ваш аккаунт и все данные успешно удалены",
     });
     
     setShowDeleteConfirm(false);
+  };
+  
+  const handleSendMessage = () => {
+    if (!newMessage.trim()) return;
+    
+    const userMessage: ChatMessage = {
+      id: Date.now().toString(),
+      text: newMessage,
+      sender: "user",
+      timestamp: new Date()
+    };
+    
+    setChatMessages([...chatMessages, userMessage]);
+    setNewMessage("");
+    
+    setTimeout(() => {
+      const supportMessage: ChatMessage = {
+        id: (Date.now() + 1).toString(),
+        text: "Благодарим за обращение. Наш специалист свяжется с вами в ближайшее время.",
+        sender: "support",
+        timestamp: new Date()
+      };
+      
+      setChatMessages(prevMessages => [...prevMessages, supportMessage]);
+    }, 1000);
+  };
+  
+  const handleSubmitFeedback = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!feedbackData.subject || !feedbackData.message) {
+      toast({
+        title: "Ошибка",
+        description: "Пожалуйста, заполните все поля формы",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    console.log("Отправка обратной связи:", feedbackData);
+    
+    toast({
+      title: "Отзыв отправлен",
+      description: "Благодарим за ваш отзыв! Мы обязательно его рассмотрим.",
+    });
+    
+    setFeedbackData({
+      type: "suggestion",
+      subject: "",
+      message: ""
+    });
   };
 
   return (
@@ -258,6 +316,10 @@ export default function Settings() {
                 <Globe className="mr-2 h-4 w-4" />
                 Общие
               </TabsTrigger>
+              <TabsTrigger value="support" className="flex-1">
+                <MessageCircle className="mr-2 h-4 w-4" />
+                Поддержка
+              </TabsTrigger>
               <TabsTrigger value="referral" className="flex-1">
                 <Share2 className="mr-2 h-4 w-4" />
                 Партнерская программа
@@ -270,7 +332,6 @@ export default function Settings() {
               )}
             </TabsList>
             
-            {/* Вкладка профиля */}
             <TabsContent value="profile" className="space-y-6">
               <div className="space-y-6">
                 <div className="flex flex-col items-center space-y-4 sm:flex-row sm:space-y-0 sm:space-x-6">
@@ -378,7 +439,6 @@ export default function Settings() {
               </div>
             </TabsContent>
             
-            {/* Вкладка отчетов */}
             <TabsContent value="reports" className="space-y-6">
               <Card className="border-dashed">
                 <CardHeader>
@@ -449,7 +509,6 @@ export default function Settings() {
               </Card>
             </TabsContent>
             
-            {/* Вкладка графиков */}
             <TabsContent value="charts" className="space-y-6">
               <Card className="border-dashed">
                 <CardHeader>
@@ -505,7 +564,6 @@ export default function Settings() {
               </Card>
             </TabsContent>
             
-            {/* Вкладка общих настроек */}
             <TabsContent value="general" className="space-y-6">
               <div className="space-y-4">
                 <div className="space-y-2">
@@ -561,7 +619,6 @@ export default function Settings() {
               </div>
             </TabsContent>
             
-            {/* Вкладка подписки */}
             <TabsContent value="subscription" className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
                 <Card className={currentUser?.subscription.plan === "free" ? "border-primary" : ""}>
@@ -715,7 +772,6 @@ export default function Settings() {
               </div>
             </TabsContent>
             
-            {/* Вкладка партнерской программы */}
             <TabsContent value="referral" className="space-y-6">
               <Card>
                 <CardHeader className="pb-2">
@@ -767,71 +823,119 @@ export default function Settings() {
               </Card>
             </TabsContent>
             
-            {/* Вкладка уведомлений */}
-            <TabsContent value="notifications" className="space-y-6">
-              <Card className="border-dashed">
-                <CardHeader>
-                  <div className="flex items-center space-x-2">
-                    <Bell className="h-5 w-5 text-muted-foreground" />
-                    <CardTitle>Настройки уведомлений</CardTitle>
-                  </div>
-                  <CardDescription>
-                    Настройте параметры уведомлений и режим тишины
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                      <Label htmlFor="notification-enabled" className="flex-1">Уведомления</Label>
-                      <Switch 
-                        id="notification-enabled" 
-                        checked={notificationEnabled} 
-                        onCheckedChange={setNotificationEnabled}
-                      />
-                    </div>
-                    
-                    <div className="flex items-center justify-between">
-                      <Label htmlFor="quiet-hours-enabled" className="flex-1">Режим тишины</Label>
-                      <Switch 
-                        id="quiet-hours-enabled" 
-                        checked={quietHoursEnabled} 
-                        onCheckedChange={setQuietHoursEnabled}
-                      />
-                    </div>
-                    
-                    {quietHoursEnabled && (
-                      <div className="grid grid-cols-2 gap-4 pt-4">
-                        <div>
-                          <Label htmlFor="quiet-start">Начало</Label>
-                          <Input 
-                            id="quiet-start" 
-                            type="time" 
-                            value={quietHoursStart} 
-                            onChange={(e) => setQuietHoursStart(e.target.value)}
-                          />
+            <TabsContent value="support" className="space-y-6">
+              <Tabs defaultValue="chat">
+                <TabsList className="w-full mb-6">
+                  <TabsTrigger value="chat" className="flex-1">
+                    <MessageCircle className="h-4 w-4 mr-2" />
+                    Чат с поддержкой
+                  </TabsTrigger>
+                  <TabsTrigger value="feedback" className="flex-1">
+                    <ThumbsUp className="h-4 w-4 mr-2" />
+                    Обратная связь
+                  </TabsTrigger>
+                </TabsList>
+                
+                <TabsContent value="chat" className="space-y-4">
+                  <Card className="border-muted">
+                    <CardContent className="p-4">
+                      <ScrollArea className="h-[400px] pr-4">
+                        <div className="space-y-4">
+                          {chatMessages.map((message) => (
+                            <div 
+                              key={message.id} 
+                              className={`flex ${message.sender === "user" ? "justify-end" : "justify-start"}`}
+                            >
+                              <div 
+                                className={`flex max-w-[80%] ${
+                                  message.sender === "user" 
+                                    ? "bg-primary text-primary-foreground" 
+                                    : "bg-muted"
+                                } rounded-lg px-4 py-2`}
+                              >
+                                {message.sender === "support" && (
+                                  <Avatar className="h-8 w-8 mr-2">
+                                    <AvatarFallback>СП</AvatarFallback>
+                                  </Avatar>
+                                )}
+                                <div>
+                                  <div className="text-sm">{message.text}</div>
+                                  <div className="text-xs mt-1 opacity-70">
+                                    {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          ))}
                         </div>
-                        <div>
-                          <Label htmlFor="quiet-end">Конец</Label>
-                          <Input 
-                            id="quiet-end" 
-                            type="time" 
-                            value={quietHoursEnd} 
-                            onChange={(e) => setQuietHoursEnd(e.target.value)}
-                          />
-                        </div>
+                      </ScrollArea>
+                      
+                      <div className="flex items-center gap-2 mt-4">
+                        <Input
+                          placeholder="Введите сообщение..."
+                          value={newMessage}
+                          onChange={(e) => setNewMessage(e.target.value)}
+                          onKeyPress={(e) => e.key === "Enter" && handleSendMessage()}
+                        />
+                        <Button size="icon" onClick={handleSendMessage}>
+                          <Send className="h-4 w-4" />
+                        </Button>
                       </div>
-                    )}
-                  </div>
-                </CardContent>
-                <CardFooter className="justify-end">
-                  <Button onClick={handleSaveNotificationSettings}>
-                    Сохранить настройки
-                  </Button>
-                </CardFooter>
-              </Card>
+                    </CardContent>
+                  </Card>
+                </TabsContent>
+                
+                <TabsContent value="feedback" className="space-y-4">
+                  <form onSubmit={handleSubmitFeedback}>
+                    <div className="space-y-4">
+                      <div>
+                        <Label htmlFor="feedback-type">Тип обращения</Label>
+                        <Select 
+                          value={feedbackData.type} 
+                          onValueChange={(value) => setFeedbackData({...feedbackData, type: value})}
+                        >
+                          <SelectTrigger id="feedback-type">
+                            <SelectValue placeholder="Выберите тип обращения" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="suggestion">Предложение</SelectItem>
+                            <SelectItem value="bug">Сообщение об ошибке</SelectItem>
+                            <SelectItem value="question">Вопрос</SelectItem>
+                            <SelectItem value="other">Другое</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      
+                      <div>
+                        <Label htmlFor="feedback-subject">Тема</Label>
+                        <Input
+                          id="feedback-subject"
+                          placeholder="Введите тему обращения"
+                          value={feedbackData.subject}
+                          onChange={(e) => setFeedbackData({...feedbackData, subject: e.target.value})}
+                        />
+                      </div>
+                      
+                      <div>
+                        <Label htmlFor="feedback-message">Сообщение</Label>
+                        <Textarea
+                          id="feedback-message"
+                          placeholder="Опишите подробнее ваше обращение..."
+                          rows={6}
+                          value={feedbackData.message}
+                          onChange={(e) => setFeedbackData({...feedbackData, message: e.target.value})}
+                        />
+                      </div>
+                    
+                      <Button type="submit" className="w-full">
+                        Отправить
+                      </Button>
+                    </div>
+                  </form>
+                </TabsContent>
+              </Tabs>
             </TabsContent>
             
-            {/* Вкладка администрирования */}
             {isAdmin && (
               <TabsContent value="admin" className="space-y-6">
                 <Card>
