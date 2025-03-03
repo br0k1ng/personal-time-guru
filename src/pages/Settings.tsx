@@ -1,4 +1,3 @@
-
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Label } from "@/components/ui/label";
@@ -18,8 +17,8 @@ import { LANGUAGES } from "@/constants";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { MessageSquare } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useLanguage } from "@/contexts/LanguageContext";
 
-// Интерфейс для сообщений чата
 interface ChatMessage {
   id: string;
   text: string;
@@ -27,7 +26,6 @@ interface ChatMessage {
   timestamp: Date;
 }
 
-// FAQ вопросы и ответы для быстрого ответа
 interface FAQItem {
   id: string;
   question: string;
@@ -63,12 +61,11 @@ const faqItems: FAQItem[] = [
 ];
 
 export default function Settings() {
-  const { t, i18n } = useTranslation();
+  const { t, currentLanguage, setLanguage } = useLanguage();
   const [theme, setTheme] = useState<"light" | "dark">("light");
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
   const { toast } = useToast();
   
-  // Состояние для чата поддержки
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([
     {
       id: "1",
@@ -81,18 +78,18 @@ export default function Settings() {
   const [showFaq, setShowFaq] = useState(true);
 
   const changeLanguage = (lng: string) => {
-    i18n.changeLanguage(lng);
+    if (lng === "ru") {
+      setLanguage("ru");
+    }
   };
 
   const handleThemeChange = (value: "light" | "dark") => {
     setTheme(value);
   };
   
-  // Функция для отправки сообщения в чат
   const handleSendMessage = () => {
     if (!newMessage.trim()) return;
     
-    // Добавляем сообщение пользователя
     const userMessage: ChatMessage = {
       id: Date.now().toString(),
       text: newMessage,
@@ -103,11 +100,9 @@ export default function Settings() {
     setChatMessages(prev => [...prev, userMessage]);
     setNewMessage("");
     
-    // Если пользователь отправил "помощь" или "help", показываем список FAQ
     if (newMessage.toLowerCase().includes("помощь") || newMessage.toLowerCase().includes("help")) {
       setShowFaq(true);
     } else {
-      // Имитация ответа от поддержки через 1 секунду
       setTimeout(() => {
         const supportMessage: ChatMessage = {
           id: (Date.now() + 1).toString(),
@@ -121,7 +116,6 @@ export default function Settings() {
     }
   };
   
-  // Функция для использования готового ответа из FAQ
   const handleFaqSelect = (answer: string) => {
     const faqMessage: ChatMessage = {
       id: Date.now().toString(),
@@ -138,7 +132,6 @@ export default function Settings() {
     });
   };
   
-  // Функция для запроса живого специалиста
   const requestLiveSupport = () => {
     const systemMessage: ChatMessage = {
       id: Date.now().toString(),
@@ -159,24 +152,26 @@ export default function Settings() {
     <div className="container mx-auto py-10">
       <Card>
         <CardHeader>
-          <CardTitle className="text-2xl">{t("settings.title")}</CardTitle>
-          <CardDescription>{t("settings.description")}</CardDescription>
+          <CardTitle className="text-2xl">{t("settings", "title")}</CardTitle>
+          <CardDescription>{t("settings", "description")}</CardDescription>
         </CardHeader>
         <CardContent>
           <Tabs defaultValue="general" className="space-y-4">
             <TabsList>
-              <TabsTrigger value="general">{t("settings.tabs.general")}</TabsTrigger>
-              <TabsTrigger value="notifications">{t("settings.tabs.notifications")}</TabsTrigger>
-              <TabsTrigger value="display">{t("settings.tabs.display")}</TabsTrigger>
-              <TabsTrigger value="support">{t("settings.tabs.support")}</TabsTrigger>
+              <TabsTrigger value="general">{t("settings", "tabs.general")}</TabsTrigger>
+              <TabsTrigger value="notifications">{t("settings", "tabs.notifications")}</TabsTrigger>
+              <TabsTrigger value="display">{t("settings", "tabs.display")}</TabsTrigger>
+              <TabsTrigger value="support">{t("settings", "tabs.support")}</TabsTrigger>
+              <TabsTrigger value="subscription">{t("settings", "tabs.subscription")}</TabsTrigger>
+              <TabsTrigger value="referral">{t("settings", "tabs.referral")}</TabsTrigger>
             </TabsList>
             <TabsContent value="general" className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="name">{t("settings.general.name")}</Label>
+                <Label htmlFor="name">{t("settings", "general.name")}</Label>
                 <Input id="name" defaultValue="John Doe" className="bg-background" />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="email">{t("settings.general.email")}</Label>
+                <Label htmlFor="email">{t("settings", "general.email")}</Label>
                 <Input
                   id="email"
                   type="email"
@@ -185,10 +180,10 @@ export default function Settings() {
                 />
               </div>
               <div className="space-y-2">
-                <Label>{t("settings.general.language")}</Label>
-                <Select onValueChange={changeLanguage} defaultValue={i18n.language}>
+                <Label>{t("settings", "general.language")}</Label>
+                <Select onValueChange={changeLanguage} defaultValue={currentLanguage}>
                   <SelectTrigger className="w-[180px]">
-                    <SelectValue placeholder={t("settings.general.selectLanguage")} />
+                    <SelectValue placeholder={t("settings", "general.selectLanguage")} />
                   </SelectTrigger>
                   <SelectContent>
                     {LANGUAGES.map((lang) => (
@@ -202,7 +197,7 @@ export default function Settings() {
             </TabsContent>
             <TabsContent value="notifications" className="space-y-4">
               <div className="flex items-center justify-between">
-                <Label htmlFor="notifications">{t("settings.notifications.enable")}</Label>
+                <Label htmlFor="notifications">{t("settings", "notifications.enable")}</Label>
                 <Switch
                   id="notifications"
                   checked={notificationsEnabled}
@@ -211,44 +206,44 @@ export default function Settings() {
               </div>
               <div className="space-y-2">
                 <Label htmlFor="email-notifications">
-                  {t("settings.notifications.emailFrequency")}
+                  {t("settings", "notifications.emailFrequency")}
                 </Label>
                 <Select defaultValue="daily">
                   <SelectTrigger className="w-[180px]">
-                    <SelectValue placeholder={t("settings.notifications.selectFrequency")} />
+                    <SelectValue placeholder={t("settings", "notifications.selectFrequency")} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="instant">{t("settings.notifications.instant")}</SelectItem>
-                    <SelectItem value="daily">{t("settings.notifications.daily")}</SelectItem>
-                    <SelectItem value="weekly">{t("settings.notifications.weekly")}</SelectItem>
-                    <SelectItem value="off">{t("settings.notifications.off")}</SelectItem>
+                    <SelectItem value="instant">{t("settings", "notifications.instant")}</SelectItem>
+                    <SelectItem value="daily">{t("settings", "notifications.daily")}</SelectItem>
+                    <SelectItem value="weekly">{t("settings", "notifications.weekly")}</SelectItem>
+                    <SelectItem value="off">{t("settings", "notifications.off")}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
             </TabsContent>
             <TabsContent value="display" className="space-y-4">
               <div className="flex items-center justify-between">
-                <Label htmlFor="theme">{t("settings.display.theme")}</Label>
+                <Label htmlFor="theme">{t("settings", "display.theme")}</Label>
                 <Select onValueChange={handleThemeChange} defaultValue={theme}>
                   <SelectTrigger className="w-[180px]">
-                    <SelectValue placeholder={t("settings.display.selectTheme")} />
+                    <SelectValue placeholder={t("settings", "display.selectTheme")} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="light">{t("settings.display.light")}</SelectItem>
-                    <SelectItem value="dark">{t("settings.display.dark")}</SelectItem>
+                    <SelectItem value="light">{t("settings", "display.light")}</SelectItem>
+                    <SelectItem value="dark">{t("settings", "display.dark")}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="font-size">{t("settings.display.fontSize")}</Label>
+                <Label htmlFor="font-size">{t("settings", "display.fontSize")}</Label>
                 <Select defaultValue="medium">
                   <SelectTrigger className="w-[180px]">
-                    <SelectValue placeholder={t("settings.display.selectSize")} />
+                    <SelectValue placeholder={t("settings", "display.selectSize")} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="small">{t("settings.display.small")}</SelectItem>
-                    <SelectItem value="medium">{t("settings.display.medium")}</SelectItem>
-                    <SelectItem value="large">{t("settings.display.large")}</SelectItem>
+                    <SelectItem value="small">{t("settings", "display.small")}</SelectItem>
+                    <SelectItem value="medium">{t("settings", "display.medium")}</SelectItem>
+                    <SelectItem value="large">{t("settings", "display.large")}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -256,12 +251,11 @@ export default function Settings() {
             <TabsContent value="support" className="space-y-4">
               <Card>
                 <CardHeader>
-                  <CardTitle>{t('settings.support.chatTitle', 'Чат с поддержкой')}</CardTitle>
-                  <CardDescription>{t('settings.support.chatDescription', 'Задайте вопрос или выберите из частых вопросов')}</CardDescription>
+                  <CardTitle>{t('settings', 'support.chatTitle')}</CardTitle>
+                  <CardDescription>{t('settings', 'support.chatDescription')}</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="h-[400px] flex flex-col relative">
-                    {/* Чат с сообщениями */}
                     <div className="flex-1 overflow-y-auto mb-4 p-4 border rounded-lg">
                       {chatMessages.map((message) => (
                         <div 
@@ -284,7 +278,6 @@ export default function Settings() {
                       ))}
                     </div>
                     
-                    {/* FAQ секция, показывается при необходимости */}
                     {showFaq && (
                       <div className="absolute bottom-16 left-0 right-0 bg-card border rounded-lg p-4 shadow-lg">
                         <h3 className="text-lg font-medium mb-2">Частые вопросы:</h3>
@@ -301,24 +294,23 @@ export default function Settings() {
                         </div>
                         <div className="flex justify-between">
                           <Button variant="outline" onClick={() => setShowFaq(false)}>
-                            Закрыть
+                            {t('settings', 'support.closeFaq')}
                           </Button>
                           <Button onClick={requestLiveSupport}>
-                            Связаться со специалистом
+                            {t('settings', 'support.contactSpecialist')}
                           </Button>
                         </div>
                       </div>
                     )}
                     
-                    {/* Форма отправки сообщения */}
                     <div className="flex gap-2">
                       <Input
-                        placeholder="Введите сообщение..."
+                        placeholder={t('settings', 'support.enterMessage')}
                         value={newMessage}
                         onChange={(e) => setNewMessage(e.target.value)}
                         onKeyPress={(e) => e.key === "Enter" && handleSendMessage()}
                       />
-                      <Button onClick={handleSendMessage}>Отправить</Button>
+                      <Button onClick={handleSendMessage}>{t('settings', 'support.sendMessage')}</Button>
                       <Button variant="outline" onClick={() => setShowFaq(!showFaq)}>
                         FAQ
                       </Button>
@@ -326,7 +318,7 @@ export default function Settings() {
                   </div>
                   
                   <div className="mt-8">
-                    <h3 className="text-lg font-medium mb-4">FAQ - Часто задаваемые вопросы</h3>
+                    <h3 className="text-lg font-medium mb-4">{t('settings', 'support.faq')}</h3>
                     <Accordion type="single" collapsible className="w-full">
                       {faqItems.map((item) => (
                         <AccordionItem key={item.id} value={item.id}>
@@ -337,6 +329,47 @@ export default function Settings() {
                         </AccordionItem>
                       ))}
                     </Accordion>
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+            <TabsContent value="subscription" className="space-y-4">
+              <Card>
+                <CardHeader>
+                  <CardTitle>{t('subscription', 'current')}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p>{t('subscription', 'freePlan')}</p>
+                  <Button className="mt-4">{t('subscription', 'upgrade')}</Button>
+                </CardContent>
+              </Card>
+            </TabsContent>
+            <TabsContent value="referral" className="space-y-4">
+              <Card>
+                <CardHeader>
+                  <CardTitle>{t('subscription', 'referral')}</CardTitle>
+                  <CardDescription>{t('subscription', 'referralDescription')}</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    <div>
+                      <Label>{t('subscription', 'yourReferralCode')}</Label>
+                      <div className="flex mt-2">
+                        <Input value="CODE123" readOnly className="bg-background" />
+                        <Button variant="outline" className="ml-2">{t('subscription', 'copy')}</Button>
+                        <Button className="ml-2">{t('subscription', 'share')}</Button>
+                      </div>
+                    </div>
+                    <div className="flex justify-between items-center mt-4">
+                      <div>
+                        <p className="text-sm text-muted-foreground">{t('subscription', 'invitedUsers')}</p>
+                        <p className="text-2xl font-bold">1/3</p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-muted-foreground">{t('subscription', 'remainingToReward')}</p>
+                        <p className="text-2xl font-bold">2</p>
+                      </div>
+                    </div>
                   </div>
                 </CardContent>
               </Card>

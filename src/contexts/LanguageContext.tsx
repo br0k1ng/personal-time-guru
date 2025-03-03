@@ -88,6 +88,53 @@ export const translations = {
       editTask: "Редактировать задачу",
       deleteTask: "Удалить задачу",
       confirmDelete: "Вы уверены, что хотите удалить эту задачу?"
+    },
+    settings: {
+      title: "Настройки",
+      description: "Управление настройками приложения",
+      tabs: {
+        general: "Общие",
+        notifications: "Уведомления",
+        display: "Отображение",
+        support: "Поддержка",
+        subscription: "Подписка",
+        referral: "Партнерская программа"
+      },
+      general: {
+        name: "Имя",
+        email: "Email",
+        language: "Язык",
+        selectLanguage: "Выберите язык"
+      },
+      notifications: {
+        enable: "Включить уведомления",
+        emailFrequency: "Частота email-уведомлений",
+        selectFrequency: "Выберите частоту",
+        instant: "Мгновенно",
+        daily: "Ежедневно",
+        weekly: "Еженедельно",
+        off: "Выключено"
+      },
+      display: {
+        theme: "Тема",
+        selectTheme: "Выберите тему",
+        light: "Светлая",
+        dark: "Темная",
+        fontSize: "Размер шрифта",
+        selectSize: "Выберите размер",
+        small: "Маленький",
+        medium: "Средний",
+        large: "Большой"
+      },
+      support: {
+        chatTitle: "Чат с поддержкой",
+        chatDescription: "Задайте вопрос или выберите из частых вопросов",
+        faq: "Часто задаваемые вопросы",
+        contactSpecialist: "Связаться со специалистом",
+        closeFaq: "Закрыть",
+        sendMessage: "Отправить",
+        enterMessage: "Введите сообщение..."
+      }
     }
   }
 };
